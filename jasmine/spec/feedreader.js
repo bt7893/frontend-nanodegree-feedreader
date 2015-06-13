@@ -24,7 +24,6 @@ $(function() {
     it('are defined', function() {
       expect(allFeeds).toBeDefined();
       expect(allFeeds.length).not.toBe(0);
-      // console.log(allFeeds);
     });
 
     /* This test loops through each feed
@@ -36,7 +35,6 @@ $(function() {
       for (i = 0; i < allFeeds.length; i++) {
         expect(allFeeds[i].url).toBeDefined();
         expect(allFeeds[i].url.length).not.toBe(0);
-        //  console.log(allFeeds[i].url);
       }
     });
 
@@ -48,7 +46,6 @@ $(function() {
       for (i = 0; i < allFeeds.length; i++) {
         expect(allFeeds[i].name).toBeDefined();
         expect(allFeeds[i].name.length).not.toBe(0);
-        //  console.log(allFeeds[i].name);
       }
     });
   });
@@ -71,12 +68,12 @@ $(function() {
     * clicked and does it hide when clicked again.
     */
     it('has a menu that will reveal when clicked', function(){
-      menu.trigger('click'); // trigger menu click action
+      menu.click(); // trigger menu click action
       expect(body.hasClass('menu-hidden')).toBeFalsy();
     });
 
     it('will hide when clicked again', function(){
-      menu.trigger('click'); // trigger menu click action
+      menu.click(); // trigger menu click action
       expect(body.hasClass('menu-hidden')).toBeTruthy();
     });
 
@@ -89,8 +86,8 @@ $(function() {
     * a single .entry element within the .feed container.
     * Note: loadFeed() is asynchronous.
     */
-    beforeEach(function(complete){
-      loadFeed(0, complete);
+    beforeEach(function(done){
+      loadFeed(0, done);
     });
     it('has at least a single .entry element within the .feed container.', function(){
       var feedContainer = $('.feed').children();
@@ -104,17 +101,19 @@ $(function() {
     * by the loadFeed function that the content actually changes.
     * Note: loadFeed() is asynchronous.
     */
-    var feedContainer  = $('.feed').find('h2').text();
-    beforeEach(function(done){
-      feedContainer;
-      loadFeed(1, done);
-    });
+    beforeEach(function(done) {
+        $(".feed").empty(); // Clear the feed
+        loadFeed(1, function() {
+            container = $('.feed').find('h2').text();
+            loadFeed(2, done); // if you load the same feed, the test will fail =) Thank you !!!
+        });
+    })
 
     it('will change the content when a new feed is loaded', function(){
-      expect($('.feed').find('h2').text()).not.toBe(feedContainer);
+      expect($('.feed').find('h2').text()).not.toBe(container);
     });
 
-    afterEach(function(done){
+    afterAll(function(done){
       loadFeed(0, done);
     });
   });
